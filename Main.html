@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Monitoreo de Ticks</title>
+  <link rel="stylesheet" href="/CSS/Main.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+</head>
+<body>
+
+  <div style="display:flex;align-items:center;justify-content:space-between;max-width:980px;margin-bottom:6px;">
+    <h1 style="margin-bottom:0">Monitoreo de Ticks</h1>
+    <button id="themeBtn" onclick="toggleTheme()" style="font-family:monospace;font-size:11px;padding:5px 14px;border:1px solid var(--border);border-radius:6px;background:var(--bg);color:var(--text-muted);cursor:pointer;">modo noche</button>
+  </div>
+  <p class="subtitle">diámetro: 140 mm · separación entre ruedas (L): 300 mm</p>
+
+  <!-- ticks -->
+  <div class="grid">
+    <div class="card">
+      <div class="card-label">Left</div>
+      <div class="tick-number" id="countL">0</div>
+      <div class="card-meta">
+        <div class="meta-row" id="distRowL">d = 0.000 m</div>
+        <div class="meta-row">
+          <span class="status-dot dot-off" id="dotL"></span>
+          <span>:3000</span>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-label">Right</div>
+      <div class="tick-number" id="countR">0</div>
+      <div class="card-meta">
+        <div class="meta-row" id="distRowR">d = 0.000 m</div>
+        <div class="meta-row">
+          <span class="status-dot dot-off" id="dotR"></span>
+          <span>:3001</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- velocidad chart -->
+  <div class="chart-wrap">
+    <div class="card-label" style="margin-bottom:14px">velocidad m/s</div>
+    <canvas id="speedChart"></canvas>
+  </div>
+
+  <!-- velocidad cards -->
+  <div class="speed-grid">
+    <div class="card">
+      <div class="card-label">velocidad left</div>
+      <div class="speed-number" id="speedL">0.000</div>
+      <div class="speed-unit">m/s</div>
+    </div>
+    <div class="card">
+      <div class="card-label">velocidad right</div>
+      <div class="speed-number" id="speedR">0.000</div>
+      <div class="speed-unit">m/s</div>
+    </div>
+  </div>
+
+  <!-- odometría -->
+  <div class="section-title">odometría diferencial</div>
+
+  <div class="odo-layout">
+    <!-- trayectoria -->
+    <div>
+      <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;flex-wrap:wrap;">
+        <button class="ctrl-btn" id="btnFollow" onclick="setMapMode('follow')" title="centrar en robot" style="width:auto;padding:0 10px;font-family:monospace;font-size:10px;" >&#9654; seguir</button>
+        <button class="ctrl-btn" id="btnFree"   onclick="setMapMode('free')"   title="modo libre"       style="width:auto;padding:0 10px;font-family:monospace;font-size:10px;">&#10021; libre</button>
+        <span style="font-family:monospace;font-size:10px;color:var(--text-dim);margin-left:4px;" id="mapModeLabel">siguiendo robot</span>
+        <button class="ctrl-btn" onclick="zoomMap(1.25)" title="acercar"  style="margin-left:auto;">+</button>
+        <button class="ctrl-btn" onclick="zoomMap(0.8)"  title="alejar">−</button>
+        <button class="ctrl-btn" onclick="resetZoom()"   title="reset zoom" style="font-size:9px;width:auto;padding:0 8px;font-family:monospace;">1:1</button>
+      </div>
+      <canvas id="trajCanvas" width="320" height="320" style="cursor:grab;"></canvas>
+      <div style="display:flex;gap:8px;margin-top:12px;align-items:center;flex-wrap:wrap;">
+        <button class="reset-btn" onclick="resetOdo()">reiniciar posición</button>
+        <button class="reset-btn" onclick="resetTodo()" style="border-color:#f4a9a8;color:#c0665f;">reiniciar todo</button>
+        <button class="ctrl-btn" id="btnPlay"  onclick="ctrlPlay()"  title="play">&#9654;</button>
+        <button class="ctrl-btn" id="btnPause" onclick="ctrlPause()" title="pause">&#9646;&#9646;</button>
+        <button class="ctrl-btn" id="btnStop"  onclick="ctrlStop()"  title="stop">&#9632;</button>
+        <button class="ctrl-btn" id="btnRew"   onclick="ctrlStep(-1)" title="retroceder" disabled>&#9664;&#9664;</button>
+        <button class="ctrl-btn" id="btnFwd"   onclick="ctrlStep(+1)" title="adelantar"  disabled>&#9654;&#9654;</button>
+        <span id="frameLabel" style="font-family:monospace;font-size:10px;color:var(--text-dim);margin-left:4px;"></span>
+      </div>
+    </div>
+
+    <!-- gráficas laterales -->
+    <div class="side-charts">
+      <div class="mini-chart-wrap">
+        <div class="card-label" style="margin-bottom:10px">ángulo θ (°)</div>
+        <canvas id="thetaChart"></canvas>
+      </div>
+      <div class="mini-chart-wrap">
+        <div class="card-label" style="margin-bottom:10px">diff ticks (L − R)</div>
+        <canvas id="diffChart"></canvas>
+      </div>
+    </div>
+
+    <!-- stats globales -->
+    <div class="odo-stats">
+      <div class="odo-card">
+        <div class="card-label">ángulo θ</div>
+        <div class="odo-value" id="angleDeg">0.0°</div>
+        <div class="odo-unit">orientación del carro</div>
+      </div>
+      <div class="odo-card">
+        <div class="card-label">posición global</div>
+        <div class="odo-value" id="posXY">X: 0.000 · Y: 0.000</div>
+        <div class="odo-unit">metros desde el origen</div>
+      </div>
+      <div class="odo-card">
+        <div class="card-label">distancia total</div>
+        <div class="odo-value" id="totalDist">0.000 m</div>
+        <div class="odo-unit">trayectoria recorrida</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4 ejes -->
+  <div class="axes-grid">
+
+    <div class="axis-card">
+      <div class="axis-label">eje global (mundo)</div>
+      <div class="axis-row">
+        <div class="axis-val">
+          <span id="gx">0.000</span>
+          <span>X global (m)</span>
+        </div>
+        <div class="axis-val">
+          <span id="gy">0.000</span>
+          <span>Y global (m)</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="axis-card">
+      <div class="axis-label">eje carro (local)</div>
+      <div class="axis-row">
+        <div class="axis-val">
+          <span id="lx">0.000</span>
+          <span>X local (adelante)</span>
+        </div>
+        <div class="axis-val">
+          <span id="ly">0.000</span>
+          <span>Y local (lateral)</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="axis-card">
+      <div class="axis-label">eje rueda izquierda</div>
+      <div class="axis-row">
+        <div class="axis-val">
+          <span id="wlx">0.000</span>
+          <span>X rueda L (m)</span>
+        </div>
+        <div class="axis-val">
+          <span id="wly">0.000</span>
+          <span>Y rueda L (m)</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="axis-card">
+      <div class="axis-label">eje rueda derecha</div>
+      <div class="axis-row">
+        <div class="axis-val">
+          <span id="wrx">0.000</span>
+          <span>X rueda R (m)</span>
+        </div>
+        <div class="axis-val">
+          <span id="wry">0.000</span>
+          <span>Y rueda R (m)</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+
+  <!-- log -->
+  <div class="log-section">
+    <div class="section-title">log general</div>
+    <div class="log-header">
+      <div class="log-filters">
+        <button class="filter-btn f-tick  active" onclick="toggleFilter('tick',  this)">TICK</button>
+        <button class="filter-btn f-odo   active" onclick="toggleFilter('odo',   this)">ODO</button>
+        <button class="filter-btn f-speed active" onclick="toggleFilter('speed', this)">SPEED</button>
+        <button class="filter-btn f-warn  active" onclick="toggleFilter('warn',  this)">WARN</button>
+      </div>
+      <button class="log-clear" onclick="clearLog()">limpiar</button>
+      <button class="log-clear" onclick="exportLog()" style="border-color:#a8d5c2;color:#4a9e7f;">exportar .txt</button>
+    </div>
+    <div class="log-box" id="logBox"></div>
+  </div>
+
+  <script src="/Function/logica.js">
+  </script>
+</body>
+</html>

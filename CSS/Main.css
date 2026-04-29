@@ -1,0 +1,380 @@
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:         #fff;
+      --bg2:        #fdfdfd;
+      --text:       #111;
+      --text-muted: #888;
+      --text-dim:   #aaa;
+      --border:     #e5e5e5;
+      --hover:      #f5f5f5;
+      --tag-odo-text: #333;
+      --tag-warn-text: #333;
+    }
+
+    :root.dark {
+      --bg:         #0f0f0f;
+      --bg2:        #141414;
+      --text:       #e8e8e8;
+      --text-muted: #666;
+      --text-dim:   #444;
+      --border:     #222;
+      --hover:      #1a1a1a;
+      --tag-odo-text: #111;
+      --tag-warn-text: #111;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: Georgia, serif;
+      padding: 48px 32px;
+      max-width: 1100px;
+      transition: background 0.2s, color 0.2s;
+    }
+
+    h1 {
+      font-size: 28px;
+      font-weight: normal;
+      letter-spacing: -0.5px;
+      margin-bottom: 6px;
+    }
+
+    .subtitle {
+      font-size: 13px;
+      color: var(--text-muted);
+      font-family: monospace;
+      margin-bottom: 40px;
+    }
+
+    /* ticks grid */
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      max-width: 560px;
+    }
+
+    .card {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 28px 24px 20px;
+    }
+
+    .card-label {
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      font-family: monospace;
+      margin-bottom: 16px;
+    }
+
+    .tick-number {
+      font-size: 64px;
+      font-weight: normal;
+      line-height: 1;
+      margin-bottom: 20px;
+    }
+
+    .card-meta {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .meta-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      font-family: monospace;
+      color: var(--text-muted);
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .dot-on  { background: #a8d5a2; }
+    .dot-off { background: #f4a9a8; }
+
+    /* velocidad chart */
+    .chart-wrap {
+      max-width: 560px;
+      margin-top: 24px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 20px 20px 16px;
+    }
+
+    .chart-wrap canvas {
+      width: 100% !important;
+      height: 160px !important;
+    }
+
+    /* speed cards */
+    .speed-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      max-width: 560px;
+      margin-top: 24px;
+    }
+
+    .speed-number {
+      font-size: 40px;
+      font-weight: normal;
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+
+    .speed-unit {
+      font-size: 11px;
+      font-family: monospace;
+      color: var(--text-dim);
+    }
+
+    /* odometry section */
+    .section-title {
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      font-family: monospace;
+      margin-top: 48px;
+      margin-bottom: 20px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid #e5e5e5;
+      max-width: 900px;
+    }
+
+    .odo-layout {
+      display: grid;
+      grid-template-columns: 320px 200px 1fr;
+      gap: 24px;
+      max-width: 980px;
+      align-items: start;
+    }
+
+    .side-charts {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .mini-chart-wrap {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 14px 14px 10px;
+    }
+
+    .mini-chart-wrap canvas {
+      width: 100% !important;
+      height: 110px !important;
+    }
+
+    /* canvas trayectoria */
+    #trajCanvas {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      display: block;
+      background: var(--bg2);
+    }
+
+    /* stats panel */
+    .odo-stats {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .odo-card {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px 18px;
+    }
+
+    .odo-value {
+      font-size: 28px;
+      font-weight: normal;
+      font-family: Georgia, serif;
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+
+    .odo-unit {
+      font-size: 11px;
+      font-family: monospace;
+      color: var(--text-dim);
+    }
+
+    /* 4 ejes */
+    .axes-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      max-width: 900px;
+      margin-top: 16px;
+    }
+
+    .axis-card {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 14px 16px;
+    }
+
+    .axis-label {
+      font-size: 10px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      font-family: monospace;
+      color: var(--text-dim);
+      margin-bottom: 8px;
+    }
+
+    .axis-row {
+      display: flex;
+      gap: 20px;
+    }
+
+    .axis-val {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .axis-val span:first-child {
+      font-size: 18px;
+      font-family: Georgia, serif;
+    }
+
+    .axis-val span:last-child {
+      font-size: 10px;
+      font-family: monospace;
+      color: var(--text-dim);
+    }
+
+    .reset-btn {
+      margin-top: 12px;
+      font-family: monospace;
+      font-size: 11px;
+      padding: 6px 14px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: var(--bg);
+      cursor: pointer;
+      color: var(--text-muted);
+    }
+
+    .reset-btn:hover { background: var(--hover); }
+
+    /* ── log ── */
+    .log-section {
+      max-width: 980px;
+      margin-top: 48px;
+    }
+
+    .log-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+    }
+
+    .log-filters {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .filter-btn {
+      font-family: monospace;
+      font-size: 10px;
+      letter-spacing: 0.08em;
+      padding: 3px 10px;
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      background: var(--bg);
+      cursor: pointer;
+      color: var(--text-muted);
+      transition: all 0.15s;
+    }
+
+    .filter-btn.active { color: #fff; border-color: transparent; }
+    .filter-btn.active.f-tick  { background: #6baadc; }
+    .filter-btn.active.f-odo   { background: #a8d5a2; }
+    .filter-btn.active.f-speed { background: #e0956b; }
+    .filter-btn.active.f-warn  { background: #f4a9a8; }
+
+    .log-clear {
+      margin-left: auto;
+      font-family: monospace;
+      font-size: 10px;
+      padding: 3px 10px;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      background: var(--bg);
+      cursor: pointer;
+      color: var(--text-dim);
+    }
+
+    .log-box {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      height: 240px;
+      overflow-y: auto;
+      font-family: monospace;
+      font-size: 11px;
+      padding: 10px 0;
+      background: var(--bg2);
+    }
+
+    .log-row {
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+      padding: 2px 14px;
+      line-height: 1.6;
+    }
+
+    .log-row:hover { background: var(--hover); }
+
+    .log-time { color: var(--text-dim); flex-shrink: 0; }
+
+    .log-tag {
+      font-size: 9px;
+      letter-spacing: 0.1em;
+      padding: 1px 6px;
+      border-radius: 10px;
+      flex-shrink: 0;
+      color: #fff;
+    }
+
+    .tag-tick  { background: #6baadc; }
+    .tag-odo   { background: #a8d5a2; color: var(--text); }
+    .tag-speed { background: #e0956b; }
+    .tag-warn  { background: #f4a9a8; color: var(--text); }
+
+    .log-msg { color: var(--text); }
+
+    .ctrl-btn {
+      width: 30px;
+      height: 30px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: var(--bg);
+      cursor: pointer;
+      font-size: 11px;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.1s;
+      padding: 0;
+    }
+    .ctrl-btn:hover { background: var(--hover); }
+    .ctrl-btn.active { background: var(--hover); border-color: #ccc; color: #111; }
