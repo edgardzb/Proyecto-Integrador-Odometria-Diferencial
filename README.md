@@ -1,4 +1,4 @@
-# Wheel Tick Monitor
+# Wheel Track Monitor
 
 Sistema de monitoreo en tiempo real para encoders de rueda con odometría diferencial. Desarrollado como proyecto integrador para aprender sobre robótica móvil, servidores Node.js y visualización de datos en el frontend.
 
